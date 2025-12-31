@@ -6,6 +6,13 @@ namespace paws1234\LaravelPostmanGenerator\Postman;
 
 final class NameHelper
 {
+    /**
+     * Generate a human-readable title for a route.
+     *
+     * @param string $method
+     * @param string $uri
+     * @return string
+     */
     public static function titleFromRoute(string $method, string $uri): string
     {
         $uri = trim($uri, '/');
@@ -17,6 +24,13 @@ final class NameHelper
         return strtoupper($method) . ' ' . $nice;
     }
 
+    /**
+     * Generate a slug for a route.
+     *
+     * @param string $method
+     * @param string $uri
+     * @return string
+     */
     public static function slug(string $method, string $uri): string
     {
         $uri = trim($uri, '/');
@@ -26,6 +40,12 @@ final class NameHelper
         return trim($s, '-');
     }
 
+    /**
+     * Get the base name of a controller FQCN.
+     *
+     * @param string|null $controllerFqcn
+     * @return string|null
+     */
     public static function controllerBase(?string $controllerFqcn): ?string
     {
         if (!$controllerFqcn) return null;

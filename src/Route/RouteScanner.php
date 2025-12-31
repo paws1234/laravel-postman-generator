@@ -18,6 +18,13 @@ final class RouteScanner
      * @param  class-string<FormRequest>|null $formRequestClass
      * @return array<int, array{key: string, in: 'path'|'query', required: bool, type: string|null, description: string|null}>
      */
+    /**
+     * Extract path params from route signature and query params from FormRequest rules (GET/HEAD only).
+     *
+     * @param  Route       $route
+     * @param  class-string<FormRequest>|null $formRequestClass
+     * @return array<int, array{key: string, in: 'path'|'query', required: bool, type: string|null, description: string|null}>
+     */
     public function extractQueryParams(Route $route, ?string $formRequestClass = null): array
     {
         $params = [];

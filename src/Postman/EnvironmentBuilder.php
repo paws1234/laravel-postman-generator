@@ -9,6 +9,12 @@ final class EnvironmentBuilder
     /**
      * @return array<string, string> envName => json
      */
+    /**
+     * Build all Postman environments from config.
+     *
+     * @param array $cfg
+     * @return array<string, string> envName => json
+     */
     public function buildAll(array $cfg): array
     {
         $out = [];

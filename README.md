@@ -1,4 +1,8 @@
+
 # Laravel Postman Generator
+
+[![Build Status](https://github.com/paws1234/laravel-postman-generator/actions/workflows/phpunit.yml/badge.svg)](https://github.com/paws1234/laravel-postman-generator/actions)
+[![Coverage Status](https://coveralls.io/repos/github/paws1234/laravel-postman-generator/badge.svg?branch=main)](https://coveralls.io/github/paws1234/laravel-postman-generator?branch=main)
 
 Generate Postman collections + environments from Laravel routes and FormRequests.
 

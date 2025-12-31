@@ -8,6 +8,14 @@ final class CollectionBuilder
 {
     public function __construct(private readonly ItemBuilder $itemBuilder) {}
 
+    /**
+     * Build a Postman collection JSON from routes and config.
+     *
+     * @param array $routes
+     * @param array $cfg
+     * @param string $collectionName
+     * @return string JSON string for Postman collection
+     */
     public function build(array $routes, array $cfg, string $collectionName): string
     {
         $groupBy = (string)$cfg['organization']['group_by'];

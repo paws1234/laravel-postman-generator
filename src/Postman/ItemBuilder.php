@@ -16,6 +16,14 @@ final class ItemBuilder
         private readonly RouteScanner $routeScanner,
     ) {}
 
+    /**
+     * Build a Postman request item from route data.
+     *
+     * @param array $route
+     * @param array $cfg
+     * @param int $seq
+     * @return array Postman request item
+     */
     public function buildItem(array $route, array $cfg, int $seq): array
     {
         $method = $route['method'];

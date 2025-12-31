@@ -13,6 +13,13 @@ final class AuthBuilder
      * @param string|null $authMode  e.g. 'bearer', 'basic', null
      * @return array|null
      */
+    /**
+     * Build Postman auth config for a route.
+     *
+     * @param array $cfg
+     * @param string|null $authMode  e.g. 'bearer', 'basic', null
+     * @return array|null
+     */
     public function build(array $cfg, ?string $authMode): ?array
     {
         if (empty($cfg['auth']['include_auth'])) {
