@@ -16,6 +16,9 @@
       "paws1234\\LaravelPostmanGenerator\\": "src/"
     }
   },
+  "autoload-dev": {
+    "Tests\\": "tests/"
+  },
   "extra": {
     "laravel": {
       "providers": [
