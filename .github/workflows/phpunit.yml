@@ -33,4 +33,3 @@ jobs:
         run: vendor/bin/phpunit tests/Unit/ExampleTest.php --debug
       - name: Run PHPUnit
         run: vendor/bin/phpunit --testdox
-        working-directory: ./laravel-postman-generator
