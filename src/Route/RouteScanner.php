@@ -14,15 +14,13 @@ final class RouteScanner
     /**
      * Extract path params from route signature and query params from FormRequest rules (GET/HEAD only).
      *
-     * @param  Route       $route
-     * @param  class-string<FormRequest>|null $formRequestClass
+     * @param  class-string<FormRequest>|null  $formRequestClass
      * @return array<int, array{key: string, in: 'path'|'query', required: bool, type: string|null, description: string|null}>
      */
     /**
      * Extract path params from route signature and query params from FormRequest rules (GET/HEAD only).
      *
-     * @param  Route       $route
-     * @param  class-string<FormRequest>|null $formRequestClass
+     * @param  class-string<FormRequest>|null  $formRequestClass
      * @return array<int, array{key: string, in: 'path'|'query', required: bool, type: string|null, description: string|null}>
      */
     public function extractQueryParams(Route $route, ?string $formRequestClass = null): array
@@ -40,7 +38,7 @@ final class RouteScanner
             $params[] = [
                 'key' => $key,
                 'in' => 'path',
-                'required' => !$optional,
+                'required' => ! $optional,
                 'type' => 'string',
                 'description' => null,
             ];
@@ -58,7 +56,7 @@ final class RouteScanner
                 $rules = (array) $req->rules();
 
                 foreach ($rules as $field => $ruleSpec) {
-                    if (!is_string($field) || $field === '' || str_contains($field, '.')) {
+                    if (! is_string($field) || $field === '' || str_contains($field, '.')) {
                         continue; // skip nested keys (foo.bar) for now
                     }
 
@@ -68,8 +66,8 @@ final class RouteScanner
                     // Required logic: if it contains "required" => required, if nullable/sometimes => not required (best-effort)
                     $required =
                         str_contains($ruleStr, 'required') &&
-                        !str_contains($ruleStr, 'nullable') &&
-                        !str_contains($ruleStr, 'sometimes');
+                        ! str_contains($ruleStr, 'nullable') &&
+                        ! str_contains($ruleStr, 'sometimes');
 
                     $params[] = [
                         'key' => $field,
@@ -110,7 +108,7 @@ final class RouteScanner
                 $uri = ltrim($r->uri(), '/');
 
                 $middleware = array_values(array_unique($r->gatherMiddleware()));
-                if (!$this->passesFilters($merged, $uri, is_string($r->getName()) ? $r->getName() : null, $middleware)) {
+                if (! $this->passesFilters($merged, $uri, is_string($r->getName()) ? $r->getName() : null, $middleware)) {
                     continue;
                 }
 
@@ -134,29 +132,29 @@ final class RouteScanner
 
         return $this->sortRoutes(
             $out,
-            (string)($merged['organization']['sort_by'] ?? 'uri'),
-            (string)($merged['organization']['sort_direction'] ?? 'asc'),
+            (string) ($merged['organization']['sort_by'] ?? 'uri'),
+            (string) ($merged['organization']['sort_direction'] ?? 'asc'),
         );
     }
 
     private function passesFilters(array $cfg, string $uri, ?string $name, array $middleware): bool
     {
-        if (!empty($cfg['routes']['api_only'])) {
+        if (! empty($cfg['routes']['api_only'])) {
             $isApiPrefix = str_starts_with($uri, 'api/');
             $hasApiMiddleware = in_array('api', $middleware, true) || $this->containsMiddleware($middleware, 'api');
 
-            if (!$isApiPrefix && !$hasApiMiddleware) {
+            if (! $isApiPrefix && ! $hasApiMiddleware) {
                 return false;
             }
         }
 
-        foreach ((array)($cfg['routes']['exclude_middleware'] ?? []) as $mw) {
+        foreach ((array) ($cfg['routes']['exclude_middleware'] ?? []) as $mw) {
             if ($this->containsMiddleware($middleware, (string) $mw)) {
                 return false;
             }
         }
 
-        $includeMw = (array)($cfg['routes']['include_middleware'] ?? []);
+        $includeMw = (array) ($cfg['routes']['include_middleware'] ?? []);
         if ($includeMw !== []) {
             $ok = false;
             foreach ($includeMw as $mw) {
@@ -165,31 +163,35 @@ final class RouteScanner
                     break;
                 }
             }
-            if (!$ok) return false;
-        }
-
-        foreach ((array)($cfg['routes']['exclude_prefixes'] ?? []) as $p) {
-            $p = trim((string) $p, '/');
-            if ($p !== '' && (str_starts_with($uri, $p . '/') || $uri === $p)) {
+            if (! $ok) {
                 return false;
             }
         }
 
-        $includePrefixes = (array)($cfg['routes']['include_prefixes'] ?? []);
+        foreach ((array) ($cfg['routes']['exclude_prefixes'] ?? []) as $p) {
+            $p = trim((string) $p, '/');
+            if ($p !== '' && (str_starts_with($uri, $p.'/') || $uri === $p)) {
+                return false;
+            }
+        }
+
+        $includePrefixes = (array) ($cfg['routes']['include_prefixes'] ?? []);
         if ($includePrefixes !== []) {
             $ok = false;
             foreach ($includePrefixes as $p) {
                 $p = trim((string) $p, '/');
-                if ($p !== '' && (str_starts_with($uri, $p . '/') || $uri === $p)) {
+                if ($p !== '' && (str_starts_with($uri, $p.'/') || $uri === $p)) {
                     $ok = true;
                     break;
                 }
             }
-            if (!$ok) return false;
+            if (! $ok) {
+                return false;
+            }
         }
 
         if ($name) {
-            foreach ((array)($cfg['routes']['exclude_names'] ?? []) as $pattern) {
+            foreach ((array) ($cfg['routes']['exclude_names'] ?? []) as $pattern) {
                 $pattern = (string) $pattern;
                 if (@preg_match($pattern, '') !== false && preg_match($pattern, $name)) {
                     return false;
@@ -197,9 +199,11 @@ final class RouteScanner
             }
         }
 
-        $includeNames = (array)($cfg['routes']['include_names'] ?? []);
+        $includeNames = (array) ($cfg['routes']['include_names'] ?? []);
         if ($includeNames !== []) {
-            if (!$name) return false;
+            if (! $name) {
+                return false;
+            }
 
             $ok = false;
             foreach ($includeNames as $pattern) {
@@ -209,7 +213,9 @@ final class RouteScanner
                     break;
                 }
             }
-            if (!$ok) return false;
+            if (! $ok) {
+                return false;
+            }
         }
 
         return true;
@@ -218,9 +224,14 @@ final class RouteScanner
     private function containsMiddleware(array $middleware, string $needle): bool
     {
         foreach ($middleware as $mw) {
-            if ($mw === $needle) return true;
-            if (str_starts_with($mw, $needle . ':')) return true;
+            if ($mw === $needle) {
+                return true;
+            }
+            if (str_starts_with($mw, $needle.':')) {
+                return true;
+            }
         }
+
         return false;
     }
 
@@ -234,11 +245,11 @@ final class RouteScanner
             return null;
         }
 
-        if (!empty($cfg['auth']['multi'])) {
-            foreach ((array)$cfg['auth']['multi'] as $authGroup) {
-                $groupMw = (array)($authGroup['middleware'] ?? []);
+        if (! empty($cfg['auth']['multi'])) {
+            foreach ((array) $cfg['auth']['multi'] as $authGroup) {
+                $groupMw = (array) ($authGroup['middleware'] ?? []);
                 foreach ($groupMw as $mw) {
-                    if ($this->containsMiddleware($middleware, (string)$mw)) {
+                    if ($this->containsMiddleware($middleware, (string) $mw)) {
                         return is_string($authGroup['mode'] ?? null) ? $authGroup['mode'] : null;
                     }
                 }
@@ -249,8 +260,8 @@ final class RouteScanner
             return is_string($cfg['auth']['mode'] ?? null) ? $cfg['auth']['mode'] : null;
         }
 
-        foreach ((array)($cfg['auth']['auth_middleware'] ?? []) as $mw) {
-            if ($this->containsMiddleware($middleware, (string)$mw)) {
+        foreach ((array) ($cfg['auth']['auth_middleware'] ?? []) as $mw) {
+            if ($this->containsMiddleware($middleware, (string) $mw)) {
                 return is_string($cfg['auth']['mode'] ?? null) ? $cfg['auth']['mode'] : 'bearer';
             }
         }
@@ -261,6 +272,7 @@ final class RouteScanner
     private function actionString(Route $r): ?string
     {
         $a = $r->getActionName();
+
         return is_string($a) ? $a : null;
     }
 
@@ -301,7 +313,7 @@ final class RouteScanner
             $ref = new \ReflectionFunction($uses);
             foreach ($ref->getParameters() as $p) {
                 $t = $p->getType();
-                if ($t instanceof \ReflectionNamedType && !$t->isBuiltin()) {
+                if ($t instanceof \ReflectionNamedType && ! $t->isBuiltin()) {
                     $paramClass = $t->getName();
                     if (is_subclass_of($paramClass, FormRequest::class)) {
                         /** @var class-string<FormRequest> $paramClass */
@@ -310,6 +322,7 @@ final class RouteScanner
                     }
                 }
             }
+
             return [null, $formRequest];
         }
 
@@ -319,7 +332,7 @@ final class RouteScanner
                 $ref = new \ReflectionMethod($controller, $method);
                 foreach ($ref->getParameters() as $p) {
                     $t = $p->getType();
-                    if ($t instanceof \ReflectionNamedType && !$t->isBuiltin()) {
+                    if ($t instanceof \ReflectionNamedType && ! $t->isBuiltin()) {
                         $paramClass = $t->getName();
                         if (is_subclass_of($paramClass, FormRequest::class)) {
                             /** @var class-string<FormRequest> $paramClass */
@@ -343,7 +356,8 @@ final class RouteScanner
         usort($routes, function ($a, $b) use ($by, $dir) {
             $ka = $a[$by] ?? '';
             $kb = $b[$by] ?? '';
-            $cmp = strcmp((string)$ka, (string)$kb);
+            $cmp = strcmp((string) $ka, (string) $kb);
+
             return $dir === 'desc' ? -$cmp : $cmp;
         });
 
@@ -359,6 +373,7 @@ final class RouteScanner
                 $base[$k] = $v;
             }
         }
+
         return $base;
     }
 }

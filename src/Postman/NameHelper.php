@@ -8,56 +8,51 @@ final class NameHelper
 {
     /**
      * Generate a human-readable title for a route.
-     *
-     * @param string $method
-     * @param string $uri
-     * @return string
      */
     public static function titleFromRoute(string $method, string $uri): string
     {
         $uri = trim($uri, '/');
-        if ($uri === '') $uri = '/';
+        if ($uri === '') {
+            $uri = '/';
+        }
 
         $nice = str_replace(['{', '}', '-', '_'], ['', '', ' ', ' '], $uri);
         $nice = preg_replace('/\s+/', ' ', $nice) ?: $nice;
 
-        return strtoupper($method) . ' ' . $nice;
+        return strtoupper($method).' '.$nice;
     }
 
     /**
      * Generate a slug for a route.
-     *
-     * @param string $method
-     * @param string $uri
-     * @return string
      */
     public static function slug(string $method, string $uri): string
     {
         $uri = trim($uri, '/');
-        $s = strtolower($method . '-' . $uri);
+        $s = strtolower($method.'-'.$uri);
         $s = preg_replace('/[{}]/', '', $s) ?: $s;
         $s = preg_replace('/[^a-z0-9]+/', '-', $s) ?: $s;
+
         return trim($s, '-');
     }
 
     /**
      * Get the base name of a controller FQCN.
-     *
-     * @param string|null $controllerFqcn
-     * @return string|null
      */
     public static function controllerBase(?string $controllerFqcn): ?string
     {
-        if (!$controllerFqcn) return null;
+        if (! $controllerFqcn) {
+            return null;
+        }
         $parts = explode('\\', $controllerFqcn);
+
         return end($parts) ?: $controllerFqcn;
     }
 
     /**
      * Extract the PHPDoc summary (first line) from a class or method.
-     * @param class-string|object $classOrObject
-     * @param string|null $method Optional method name
-     * @return string|null
+     *
+     * @param  class-string|object  $classOrObject
+     * @param  string|null  $method  Optional method name
      */
     public static function phpDocSummary($classOrObject, ?string $method = null): ?string
     {
@@ -68,7 +63,9 @@ final class NameHelper
                 $ref = new \ReflectionClass($classOrObject);
             }
             $doc = $ref->getDocComment();
-            if (!$doc) return null;
+            if (! $doc) {
+                return null;
+            }
             // Remove comment markers
             $doc = preg_replace('/^\s*\/\*\*?|\*\/|^\s*\* ?/m', '', $doc);
             $lines = preg_split('/\r?\n/', trim($doc));
@@ -82,6 +79,7 @@ final class NameHelper
         } catch (\ReflectionException) {
             return null;
         }
+
         return null;
     }
 }

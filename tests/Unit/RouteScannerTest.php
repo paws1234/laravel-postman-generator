@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests\Unit;
@@ -10,7 +11,7 @@ class RouteScannerTest extends TestCase
 {
     public function test_scan_returns_array(): void
     {
-        $scanner = new RouteScanner();
+        $scanner = new RouteScanner;
         $result = $scanner->scan([
             'routes' => [
                 'exclude_fallback' => false,
@@ -53,4 +54,3 @@ class RouteScannerTest extends TestCase
         $this->assertIsArray($result);
     }
 }
-

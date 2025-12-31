@@ -5,8 +5,10 @@ declare(strict_types=1);
 use Orchestra\Testbench\TestCase;
 use paws1234\LaravelPostmanGenerator\FormRequest\FormRequestBodyInferer;
 
-class DummyFormRequest extends \Illuminate\Foundation\Http\FormRequest {
-    public function rules(): array {
+class DummyFormRequest extends \Illuminate\Foundation\Http\FormRequest
+{
+    public function rules(): array
+    {
         return [
             'name' => 'required|string',
             'email' => 'required|email',
@@ -15,8 +17,10 @@ class DummyFormRequest extends \Illuminate\Foundation\Http\FormRequest {
             'tags.*' => 'string',
         ];
     }
+
     // Disable validation for testing
     protected function passedValidation() {}
+
     public function validateResolved() {}
 }
 
@@ -24,7 +28,7 @@ class FormRequestBodyInfererTest extends TestCase
 {
     public function test_infer_returns_expected_structure(): void
     {
-        $inferer = new FormRequestBodyInferer();
+        $inferer = new FormRequestBodyInferer;
         $result = $inferer->infer(DummyFormRequest::class, true);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('name', $result);
@@ -38,13 +42,13 @@ class FormRequestBodyInfererTest extends TestCase
 
     public function test_infer_returns_null_for_invalid_class(): void
     {
-        $inferer = new FormRequestBodyInferer();
+        $inferer = new FormRequestBodyInferer;
         $this->assertNull($inferer->infer('NotAClass'));
     }
 
     public function test_infer_returns_null_for_non_form_request(): void
     {
-        $inferer = new FormRequestBodyInferer();
+        $inferer = new FormRequestBodyInferer;
         $this->assertNull($inferer->infer(\stdClass::class));
     }
 }

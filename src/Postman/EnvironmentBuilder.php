@@ -12,15 +12,15 @@ final class EnvironmentBuilder
     /**
      * Build all Postman environments from config.
      *
-     * @param array $cfg
      * @return array<string, string> envName => json
      */
     public function buildAll(array $cfg): array
     {
         $out = [];
-        foreach ((array)$cfg['environments'] as $name => $vars) {
-            $out[(string)$name] = $this->buildOne((string)$name, (array)$vars);
+        foreach ((array) $cfg['environments'] as $name => $vars) {
+            $out[(string) $name] = $this->buildOne((string) $name, (array) $vars);
         }
+
         return $out;
     }
 
@@ -31,8 +31,8 @@ final class EnvironmentBuilder
 
         foreach ($vars as $k => $v) {
             $values[] = [
-                'key' => (string)$k,
-                'value' => is_scalar($v) || $v === null ? (string)$v : json_encode($v),
+                'key' => (string) $k,
+                'value' => is_scalar($v) || $v === null ? (string) $v : json_encode($v),
                 'enabled' => true,
             ];
         }

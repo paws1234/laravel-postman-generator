@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace paws1234\LaravelPostmanGenerator\Postman;
 
+use Illuminate\Routing\Route;
 use paws1234\LaravelPostmanGenerator\FormRequest\FormRequestBodyInferer;
 use paws1234\LaravelPostmanGenerator\Route\RouteScanner;
-use Illuminate\Routing\Route;
 
 final class ItemBuilder
 {
@@ -19,9 +19,6 @@ final class ItemBuilder
     /**
      * Build a Postman request item from route data.
      *
-     * @param array $route
-     * @param array $cfg
-     * @param int $seq
      * @return array Postman request item
      */
     public function buildItem(array $route, array $cfg, int $seq): array
@@ -34,7 +31,7 @@ final class ItemBuilder
             (bool) ($cfg['request_generation']['parameterize_route_params'] ?? false)
         );
 
-        $rawUrl = '{{baseUrl}}/' . ltrim($urlPath, '/');
+        $rawUrl = '{{baseUrl}}/'.ltrim($urlPath, '/');
 
         $headers = [
             ['key' => 'Accept', 'value' => 'application/json'],
@@ -73,7 +70,7 @@ final class ItemBuilder
                         'key' => $p['key'],
                         'value' => '',
                         'description' => $p['description'] ?? null,
-                        'disabled' => !$p['required'],
+                        'disabled' => ! $p['required'],
                     ], $queryParams),
                 ];
             }
@@ -86,7 +83,7 @@ final class ItemBuilder
          */
         if (
             in_array($method, ['POST', 'PUT', 'PATCH'], true)
-            && !empty($cfg['request_generation']['infer_body_from_form_request'])
+            && ! empty($cfg['request_generation']['infer_body_from_form_request'])
         ) {
             $body = $this->bodyInferer->infer(
                 $route['form_request'] ?? null,
@@ -129,7 +126,7 @@ final class ItemBuilder
          * Tests
          * -----
          */
-        if (!empty($cfg['tests']['enabled'])) {
+        if (! empty($cfg['tests']['enabled'])) {
             $status = (int) ($cfg['tests']['default_success_status'] ?? 200);
 
             $item['event'] = [[
@@ -139,7 +136,7 @@ final class ItemBuilder
                     'exec' => [
                         "pm.test(\"Status is {$status}\", function () {",
                         "    pm.response.to.have.status({$status});",
-                        "});",
+                        '});',
                     ],
                 ],
             ]];
@@ -150,7 +147,7 @@ final class ItemBuilder
 
     private function nameFor(array $route): string
     {
-        if (!empty($route['name'])) {
+        if (! empty($route['name'])) {
             return (string) $route['name'];
         }
 
@@ -159,14 +156,14 @@ final class ItemBuilder
 
     private function parameterizeRouteParams(string $uri, bool $enabled): string
     {
-        if (!$enabled) {
+        if (! $enabled) {
             return $uri;
         }
 
         // {id} or {id?} → {{id}}
         return preg_replace_callback(
             '/\{([a-zA-Z0-9_]+)\??\}/',
-            static fn ($m) => '{{' . $m[1] . '}}',
+            static fn ($m) => '{{'.$m[1].'}}',
             $uri
         ) ?? $uri;
     }

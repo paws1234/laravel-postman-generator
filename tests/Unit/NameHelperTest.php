@@ -32,7 +32,8 @@ class NameHelperTest extends TestCase
          *
          * This is a description.
          */
-        $class = new class {
+        $class = new class
+        {
             /**
              * Method summary.
              *

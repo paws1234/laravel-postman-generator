@@ -9,14 +9,14 @@ class AuthBuilderTest extends TestCase
 {
     public function test_build_returns_null_for_none(): void
     {
-        $builder = new AuthBuilder();
+        $builder = new AuthBuilder;
         $cfg = ['auth' => ['include_auth' => true, 'mode' => 'none']];
         $this->assertNull($builder->build($cfg, 'none'));
     }
 
     public function test_build_bearer(): void
     {
-        $builder = new AuthBuilder();
+        $builder = new AuthBuilder;
         $cfg = ['auth' => ['include_auth' => true, 'mode' => 'bearer', 'bearer_token_var' => 'TOKEN']];
         $auth = $builder->build($cfg, 'bearer');
         $this->assertIsArray($auth);
@@ -25,7 +25,7 @@ class AuthBuilderTest extends TestCase
 
     public function test_build_basic(): void
     {
-        $builder = new AuthBuilder();
+        $builder = new AuthBuilder;
         $cfg = ['auth' => ['include_auth' => true, 'mode' => 'basic', 'basic_user_var' => 'USER', 'basic_pass_var' => 'PASS']];
         $auth = $builder->build($cfg, 'basic');
         $this->assertIsArray($auth);

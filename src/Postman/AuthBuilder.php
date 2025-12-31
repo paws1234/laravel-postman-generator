@@ -9,16 +9,12 @@ final class AuthBuilder
     /**
      * Build Postman auth config for a route.
      *
-     * @param array $cfg
-     * @param string|null $authMode  e.g. 'bearer', 'basic', null
-     * @return array|null
+     * @param  string|null  $authMode  e.g. 'bearer', 'basic', null
      */
     /**
      * Build Postman auth config for a route.
      *
-     * @param array $cfg
-     * @param string|null $authMode  e.g. 'bearer', 'basic', null
-     * @return array|null
+     * @param  string|null  $authMode  e.g. 'bearer', 'basic', null
      */
     public function build(array $cfg, ?string $authMode): ?array
     {
@@ -26,27 +22,27 @@ final class AuthBuilder
             return null;
         }
 
-        if (!$authMode || $authMode === 'none') {
+        if (! $authMode || $authMode === 'none') {
             return null;
         }
 
         return match ($authMode) {
             'bearer' => $this->buildBearer($cfg),
-            'basic'  => $this->buildBasic($cfg),
-            default  => null,
+            'basic' => $this->buildBasic($cfg),
+            default => null,
         };
     }
 
     private function buildBearer(array $cfg): array
     {
-        $var = (string)($cfg['auth']['bearer_token_var'] ?? 'token');
+        $var = (string) ($cfg['auth']['bearer_token_var'] ?? 'token');
 
         return [
             'type' => 'bearer',
             'bearer' => [
                 [
                     'key' => 'token',
-                    'value' => '{{' . $var . '}}',
+                    'value' => '{{'.$var.'}}',
                     'type' => 'string',
                 ],
             ],
@@ -55,20 +51,20 @@ final class AuthBuilder
 
     private function buildBasic(array $cfg): array
     {
-        $userVar = (string)($cfg['auth']['basic_user_var'] ?? 'username');
-        $passVar = (string)($cfg['auth']['basic_pass_var'] ?? 'password');
+        $userVar = (string) ($cfg['auth']['basic_user_var'] ?? 'username');
+        $passVar = (string) ($cfg['auth']['basic_pass_var'] ?? 'password');
 
         return [
             'type' => 'basic',
             'basic' => [
                 [
                     'key' => 'username',
-                    'value' => '{{' . $userVar . '}}',
+                    'value' => '{{'.$userVar.'}}',
                     'type' => 'string',
                 ],
                 [
                     'key' => 'password',
-                    'value' => '{{' . $passVar . '}}',
+                    'value' => '{{'.$passVar.'}}',
                     'type' => 'string',
                 ],
             ],

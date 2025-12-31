@@ -12,13 +12,13 @@ final class PostmanGeneratorServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/postman-generator.php', 'postman-generator');
+        $this->mergeConfigFrom(__DIR__.'/../config/postman-generator.php', 'postman-generator');
     }
 
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/../config/postman-generator.php' => config_path('postman-generator.php'),
+            __DIR__.'/../config/postman-generator.php' => config_path('postman-generator.php'),
         ], 'postman-generator-config');
 
         if ($this->app->runningInConsole()) {

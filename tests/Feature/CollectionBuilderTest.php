@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 use Orchestra\Testbench\TestCase;
+use paws1234\LaravelPostmanGenerator\FormRequest\FormRequestBodyInferer;
+use paws1234\LaravelPostmanGenerator\Postman\AuthBuilder;
 use paws1234\LaravelPostmanGenerator\Postman\CollectionBuilder;
 use paws1234\LaravelPostmanGenerator\Postman\ItemBuilder;
-use paws1234\LaravelPostmanGenerator\Postman\AuthBuilder;
-use paws1234\LaravelPostmanGenerator\FormRequest\FormRequestBodyInferer;
 
 class CollectionBuilderTest extends TestCase
 {
     public function test_build_returns_json(): void
     {
         $itemBuilder = new ItemBuilder(
-            new AuthBuilder(),
-            new FormRequestBodyInferer(),
-            new \paws1234\LaravelPostmanGenerator\Route\RouteScanner()
+            new AuthBuilder,
+            new FormRequestBodyInferer,
+            new \paws1234\LaravelPostmanGenerator\Route\RouteScanner
         );
         $builder = new CollectionBuilder($itemBuilder);
         $routes = [

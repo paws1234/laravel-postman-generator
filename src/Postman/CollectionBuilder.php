@@ -11,15 +11,12 @@ final class CollectionBuilder
     /**
      * Build a Postman collection JSON from routes and config.
      *
-     * @param array $routes
-     * @param array $cfg
-     * @param string $collectionName
      * @return string JSON string for Postman collection
      */
     public function build(array $routes, array $cfg, string $collectionName): string
     {
-        $groupBy = (string)$cfg['organization']['group_by'];
-        $folderDepth = (int)($cfg['organization']['folder_depth'] ?? 2);
+        $groupBy = (string) $cfg['organization']['group_by'];
+        $folderDepth = (int) ($cfg['organization']['folder_depth'] ?? 2);
 
         $root = [
             'info' => [
@@ -34,6 +31,7 @@ final class CollectionBuilder
             foreach ($routes as $r) {
                 $root['item'][] = $this->itemBuilder->buildItem($r, $cfg, $seq++);
             }
+
             return json_encode($root, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         }
 
@@ -70,11 +68,14 @@ final class CollectionBuilder
         }
 
         // prefix grouping
-        $uri = trim((string)$route['uri'], '/');
-        if ($uri === '') return 'Root';
+        $uri = trim((string) $route['uri'], '/');
+        if ($uri === '') {
+            return 'Root';
+        }
 
         $parts = explode('/', $uri);
         $parts = array_slice($parts, 0, max(1, $depth));
+
         return implode('/', $parts);
     }
 }

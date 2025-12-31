@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use Orchestra\Testbench\TestCase;
-use paws1234\LaravelPostmanGenerator\PostmanGeneratorServiceProvider;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Mockery;
+use Orchestra\Testbench\TestCase;
+use paws1234\LaravelPostmanGenerator\PostmanGeneratorServiceProvider;
 
 final class EdgeCaseCollectionTest extends TestCase
 {
@@ -40,13 +40,12 @@ final class EdgeCaseCollectionTest extends TestCase
      * Test generating a collection with force overwrite.
      */
     public function test_generate_collection_force_overwrite(): void
-{
-    $exitCode = Artisan::call('postman:generate', [
-        '--force' => true,
-        '--dry-run' => true,
-    ]);
+    {
+        $exitCode = Artisan::call('postman:generate', [
+            '--force' => true,
+            '--dry-run' => true,
+        ]);
 
-    $this->assertSame(0, $exitCode);
-}
-
+        $this->assertSame(0, $exitCode);
+    }
 }
