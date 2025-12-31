@@ -1,0 +1,35 @@
+# Composer
+/vendor/
+/composer.lock
+
+# PHPUnit
+/phpunit.xml
+/phpunit.xml.dist
+/test-results/
+
+# Laravel
+.env
+.env.*
+/storage/
+/bootstrap/cache/
+
+# IDEs
+/.idea/
+/.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+/node_modules/
+
+# Output
+/output/
+/collections/
+/environments/
+
+# Coverage
+/coverage/
