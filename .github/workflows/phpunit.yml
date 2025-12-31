@@ -29,5 +29,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
       - name: Show directory structure (debug)
         run: ls -lR
+      - name: Run single test file (debug)
+        run: vendor/bin/phpunit tests/Unit/ExampleTest.php --debug
       - name: Run PHPUnit
         run: vendor/bin/phpunit --testdox
