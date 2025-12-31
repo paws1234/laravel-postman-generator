@@ -12,6 +12,9 @@ jobs:
     strategy:
       matrix:
         php-versions: ['8.1', '8.2', '8.3']
+    defaults:
+      run:
+        working-directory: ./
     steps:
       - uses: actions/checkout@v4
       - name: Set up PHP
@@ -20,7 +23,11 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, dom
           coverage: none
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Show directory structure (debug)
+        run: ls -lR
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --testdox
+        run: vendor/bin/phpunit --testdox -c phpunit.xml
