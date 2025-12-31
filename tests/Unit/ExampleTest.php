@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use PHPUnit\Framework\TestCase;
+use Orchestra\Testbench\TestCase;
+use paws1234\LaravelPostmanGenerator\Route\RouteScanner;
 
 class ExampleTest extends TestCase
 {

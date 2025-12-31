@@ -31,6 +31,9 @@ class RouteScannerTest extends TestCase
                 'include_auth' => false,
                 'detect_from_middleware' => false,
                 'mode' => 'none',
+
+                namespace Tests\Unit;
+
                 'auth_middleware' => [],
             ],
             'request_generation' => [

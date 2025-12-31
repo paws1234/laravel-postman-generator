@@ -17,7 +17,11 @@ class CollectionBuilderTest extends TestCase
         $routes = [
             [
                 'method' => 'GET',
+
                 'uri' => 'users',
+
+                namespace Tests\Feature;
+
                 'name' => 'users.index',
                 'action' => null,
                 'controller' => null,
