@@ -6,9 +6,11 @@
 
 Generate Postman collections + environments from Laravel routes and FormRequests.
 
+
 ## Requirements
-- PHP 8.1+
-- Laravel 10/11/12
+- PHP 8.1+ (Laravel 9)
+- PHP 8.2+ (Laravel 10/11/12)
+- Laravel 9/10/11/12
 
 
 ## Installation
@@ -43,6 +45,7 @@ Publish and edit the config file:
 php artisan vendor:publish --provider="paws1234\LaravelPostmanGenerator\PostmanGeneratorServiceProvider"
 ```
 
+
 ## Features
 - Postman collection and environment generation
 - FormRequest body inference
@@ -51,9 +54,11 @@ php artisan vendor:publish --provider="paws1234\LaravelPostmanGenerator\PostmanG
 - Deterministic output
 - CLI commands for generation and cleanup
 
+
 ## Requirements
-- PHP 8.1+
-- Laravel 10/11/12
+- PHP 8.1+ (Laravel 9)
+- PHP 8.2+ (Laravel 10/11/12)
+- Laravel 9/10/11/12
 
 ## How It Works
 - Scans routes and FormRequests
