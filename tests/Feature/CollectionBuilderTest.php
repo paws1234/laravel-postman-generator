@@ -12,15 +12,17 @@ class CollectionBuilderTest extends TestCase
 {
     public function test_build_returns_json(): void
     {
-        $itemBuilder = new ItemBuilder(new AuthBuilder(), new FormRequestBodyInferer());
+        $itemBuilder = new ItemBuilder(
+            new AuthBuilder(),
+            new FormRequestBodyInferer(),
+            new \paws1234\LaravelPostmanGenerator\Route\RouteScanner()
+        );
         $builder = new CollectionBuilder($itemBuilder);
         $routes = [
             [
                 'method' => 'GET',
 
                 'uri' => 'users',
-
-                namespace Tests\Feature;
 
                 'name' => 'users.index',
                 'action' => null,

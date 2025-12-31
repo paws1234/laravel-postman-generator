@@ -10,7 +10,7 @@ class NameHelperTest extends TestCase
     public function test_title_from_route(): void
     {
         $this->assertSame('GET users', NameHelper::titleFromRoute('GET', 'users'));
-        $this->assertSame('POST users id', NameHelper::titleFromRoute('POST', 'users/{id}'));
+        $this->assertSame('POST users/id', NameHelper::titleFromRoute('POST', 'users/{id}'));
     }
 
     public function test_slug(): void

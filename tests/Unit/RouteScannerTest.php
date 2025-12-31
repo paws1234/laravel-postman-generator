@@ -1,6 +1,7 @@
 <?php
-
 declare(strict_types=1);
+
+namespace Tests\Unit;
 
 use Orchestra\Testbench\TestCase;
 use paws1234\LaravelPostmanGenerator\Route\RouteScanner;
@@ -31,9 +32,6 @@ class RouteScannerTest extends TestCase
                 'include_auth' => false,
                 'detect_from_middleware' => false,
                 'mode' => 'none',
-
-                namespace Tests\Unit;
-
                 'auth_middleware' => [],
             ],
             'request_generation' => [
@@ -55,3 +53,4 @@ class RouteScannerTest extends TestCase
         $this->assertIsArray($result);
     }
 }
+

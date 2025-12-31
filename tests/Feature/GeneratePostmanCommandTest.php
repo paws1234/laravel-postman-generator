@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Artisan;
 
 class GeneratePostmanCommandTest extends TestCase
 {
+    protected function getPackageProviders($app)
+    {
+        return [\paws1234\LaravelPostmanGenerator\PostmanGeneratorServiceProvider::class];
+    }
+
     public function test_command_runs_successfully(): void
     {
         $exitCode = Artisan::call('postman:generate', [

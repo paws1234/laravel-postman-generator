@@ -15,6 +15,9 @@ class DummyFormRequest extends \Illuminate\Foundation\Http\FormRequest {
             'tags.*' => 'string',
         ];
     }
+    // Disable validation for testing
+    protected function passedValidation() {}
+    public function validateResolved() {}
 }
 
 class FormRequestBodyInfererTest extends TestCase

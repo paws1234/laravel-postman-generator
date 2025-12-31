@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace paws1234\LaravelPostmanGenerator\Postman;
 
 use paws1234\LaravelPostmanGenerator\FormRequest\FormRequestBodyInferer;
+use paws1234\LaravelPostmanGenerator\Route\RouteScanner;
+use Illuminate\Routing\Route;
 
 final class ItemBuilder
 {
     public function __construct(
         private readonly AuthBuilder $authBuilder,
-        private readonly FormRequestBodyInferer $bodyInferer
+        private readonly FormRequestBodyInferer $bodyInferer,
+        private readonly RouteScanner $routeScanner,
     ) {}
 
     public function buildItem(array $route, array $cfg, int $seq): array
@@ -18,34 +21,47 @@ final class ItemBuilder
         $method = $route['method'];
         $uri = $route['uri'];
 
-        $urlPath = $this->parameterizeRouteParams($uri, (bool)$cfg['request_generation']['parameterize_route_params']);
+        $urlPath = $this->parameterizeRouteParams(
+            $uri,
+            (bool) ($cfg['request_generation']['parameterize_route_params'] ?? false)
+        );
+
         $rawUrl = '{{baseUrl}}/' . ltrim($urlPath, '/');
 
         $headers = [
             ['key' => 'Accept', 'value' => 'application/json'],
         ];
-        // Sort headers by key for determinism
-        usort($headers, fn($a, $b) => strcmp($a['key'], $b['key']));
+
+        usort($headers, fn ($a, $b) => strcmp($a['key'], $b['key']));
 
         $request = [
             'method' => $method,
             'header' => $headers,
-            'url' => $rawUrl, // string form is valid and avoids baseUrl parsing issues
+            'url' => $rawUrl,
         ];
 
-        // Query params (for GET/HEAD)
-        if (in_array($method, ['GET', 'HEAD'], true)) {
-            // Try to extract from route signature and FormRequest
-            $scanner = new \paws1234\LaravelPostmanGenerator\Route\RouteScanner();
-            $queryParams = $scanner->extractQueryParams($route['__route_obj'] ?? null, $route['form_request'] ?? null);
-            if ($queryParams && is_array($queryParams)) {
-                // Sort query params by key for determinism
-                usort($queryParams, fn($a, $b) => strcmp($a['key'], $b['key']));
+        /**
+         * -------------------------
+         * Query params (GET / HEAD)
+         * -------------------------
+         */
+        if (in_array($method, ['GET', 'HEAD'], true)
+            && isset($route['__route_obj'])
+            && $route['__route_obj'] instanceof Route
+        ) {
+            $queryParams = $this->routeScanner->extractQueryParams(
+                $route['__route_obj'],
+                $route['form_request'] ?? null
+            );
+
+            if ($queryParams !== []) {
+                usort($queryParams, fn ($a, $b) => strcmp($a['key'], $b['key']));
+
                 $request['url'] = [
                     'raw' => $rawUrl,
                     'host' => ['{{baseUrl}}'],
                     'path' => explode('/', ltrim($urlPath, '/')),
-                    'query' => array_map(fn($p) => [
+                    'query' => array_map(static fn ($p) => [
                         'key' => $p['key'],
                         'value' => '',
                         'description' => $p['description'] ?? null,
@@ -55,27 +71,43 @@ final class ItemBuilder
             }
         }
 
-        // Body inference (JSON)
-        $hasBody = in_array($method, ['POST', 'PUT', 'PATCH'], true);
-        if ($hasBody && !empty($cfg['request_generation']['infer_body_from_form_request'])) {
+        /**
+         * -------------------------
+         * Body (POST / PUT / PATCH)
+         * -------------------------
+         */
+        if (
+            in_array($method, ['POST', 'PUT', 'PATCH'], true)
+            && !empty($cfg['request_generation']['infer_body_from_form_request'])
+        ) {
             $body = $this->bodyInferer->infer(
-                $route['form_request'],
-                (bool)$cfg['request_generation']['generate_example_values']
+                $route['form_request'] ?? null,
+                (bool) ($cfg['request_generation']['generate_example_values'] ?? false)
             );
 
             if (is_array($body)) {
                 $request['body'] = [
                     'mode' => 'raw',
                     'raw' => json_encode($body, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
-                    'options' => ['raw' => ['language' => 'json']],
+                    'options' => [
+                        'raw' => ['language' => 'json'],
+                    ],
                 ];
-                $request['header'][] = ['key' => 'Content-Type', 'value' => 'application/json'];
+
+                $request['header'][] = [
+                    'key' => 'Content-Type',
+                    'value' => 'application/json',
+                ];
             }
         }
 
-        $auth = $this->authBuilder->build($cfg, (bool)$route['has_auth']);
+        /**
+         * -----
+         * Auth
+         * -----
+         */
         $auth = $this->authBuilder->build($cfg, $route['auth_mode'] ?? null);
-        if ($auth) {
+        if ($auth !== null) {
             $request['auth'] = $auth;
         }
 
@@ -84,16 +116,22 @@ final class ItemBuilder
             'request' => $request,
         ];
 
+        /**
+         * -----
+         * Tests
+         * -----
+         */
         if (!empty($cfg['tests']['enabled'])) {
-            $status = (int)($cfg['tests']['default_success_status'] ?? 200);
+            $status = (int) ($cfg['tests']['default_success_status'] ?? 200);
+
             $item['event'] = [[
                 'listen' => 'test',
                 'script' => [
                     'type' => 'text/javascript',
                     'exec' => [
-                        'pm.test("Status is ' . $status . '", function () {',
-                        '    pm.response.to.have.status(' . $status . ');',
-                        '});',
+                        "pm.test(\"Status is {$status}\", function () {",
+                        "    pm.response.to.have.status({$status});",
+                        "});",
                     ],
                 ],
             ]];
@@ -105,16 +143,23 @@ final class ItemBuilder
     private function nameFor(array $route): string
     {
         if (!empty($route['name'])) {
-            return (string)$route['name'];
+            return (string) $route['name'];
         }
+
         return NameHelper::titleFromRoute($route['method'], $route['uri']);
     }
 
     private function parameterizeRouteParams(string $uri, bool $enabled): string
     {
-        if (!$enabled) return $uri;
+        if (!$enabled) {
+            return $uri;
+        }
 
-        // Replace {id} with {{id}} for Postman variables
-        return preg_replace_callback('/\{([a-zA-Z0-9_]+)\}/', fn($m) => '{{' . $m[1] . '}}', $uri) ?? $uri;
+        // {id} or {id?} → {{id}}
+        return preg_replace_callback(
+            '/\{([a-zA-Z0-9_]+)\??\}/',
+            static fn ($m) => '{{' . $m[1] . '}}',
+            $uri
+        ) ?? $uri;
     }
 }
