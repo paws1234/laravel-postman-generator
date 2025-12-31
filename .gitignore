@@ -3,9 +3,9 @@
 /composer.lock
 
 # PHPUnit
-/phpunit.xml
-/phpunit.xml.dist
-/test-results/
+# /phpunit.xml
+# /phpunit.xml.dist
+# /test-results/
 
 # Laravel
 .env
