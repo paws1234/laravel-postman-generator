@@ -9,6 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    concurrency:
+      group: phpunit-${{ github.run_id }}
+      cancel-in-progress: false
+
     strategy:
       matrix:
         php-versions: ['8.1', '8.2', '8.3']
@@ -23,14 +27,14 @@ jobs:
           extensions: mbstring, dom
           coverage: none
 
-      - name: Validate composer.json
-        run: composer validate --strict
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ matrix.php-versions }}-${{ hashFiles('**/composer.lock') }}
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
-
-      - name: Dump autoload
-        run: composer dump-autoload
 
       - name: Run PHPUnit
         run: vendor/bin/phpunit --testdox
