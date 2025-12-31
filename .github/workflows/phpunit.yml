@@ -30,4 +30,4 @@ jobs:
       - name: Show directory structure (debug)
         run: ls -lR
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --testdox -c phpunit.xml
+        run: vendor/bin/phpunit --testdox
