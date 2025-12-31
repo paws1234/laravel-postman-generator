@@ -24,8 +24,12 @@ jobs:
           extensions: mbstring, dom
           coverage: none
 
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Run Laravel Pint (lint)
+        run: vendor/bin/pint --test
 
       - name: Run PHPUnit
         run: vendor/bin/phpunit -c phpunit.xml --testdox
